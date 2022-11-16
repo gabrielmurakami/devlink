@@ -3,7 +3,7 @@
   align-items: center;
   flex-direction: column;
   min-height: 100vh;
-  padding: 0 6px;
+  padding: 0 6px 28px 6px;
 }
 
 .label {
@@ -23,14 +23,14 @@
   margin-right: 14px;
 }
 
-.btn-resgister {
+.btn-register {
   marign-bottom: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.btn-resgister svg {
+.btn-register svg {
   margin-left: 8px;
 }
 
@@ -48,6 +48,7 @@
   background-color: rgba(36, 36, 36, 0.35);
   border-radius: 4px;
   padding: 14px 8px;
+  margin-bottom: 14px;
 }
 
 .animated-pop {

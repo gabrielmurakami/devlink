@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./admin.css";
 import { Header } from "../../components/Header";
 import { Logo } from "../../components/Logo";
@@ -22,6 +22,27 @@ export default function Admin() {
   const [urlInput, setUrlInput] = useState("");
   const [backgroundColorInput, setBackgroundColorInput] = useState("#f1f1f1");
   const [textColorInput, setTextColorInput] = useState("#121212");
+
+  const [links, setLinks] = useState([]);
+
+  useEffect(() => {
+    const linkRef = collection(db, "links");
+    const queryRef = query(linkRef, orderBy("created", "desc"));
+    onSnapshot(queryRef, (snapshot) => {
+      let lista = [];
+
+      snapshot.forEach((doc) => {
+        lista.push({
+          id: doc.id,
+          name: doc.data().name,
+          url: doc.data().url,
+          bg: doc.data().bg,
+          color: doc.data().color,
+        });
+      });
+      setLinks(lista);
+    });
+  }, []);
 
   async function handleRegister(e) {
     e.preventDefault();
@@ -56,6 +77,23 @@ export default function Admin() {
       .catch((error) => {
         console.log("Deu UM ERRO AIIII " + error);
       });
+  }
+
+  async function handleDeleteLink(id) {
+    const docRef = doc(db, "links", id);
+
+    await deleteDoc(docRef).then(() => {
+      toast.success("Deletado com sucesso!", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    });
   }
 
   return (
@@ -113,23 +151,30 @@ export default function Admin() {
           </div>
         )}
 
-        <button className="btn-resgister" type="submit">
+        <button className="btn-register" type="submit">
           Cadastrar <MdAddLink size={24} color="#FFF" />
         </button>
       </form>
 
       <h2 className="title">MEUS LINKS</h2>
-      <article
-        className="list animated-pop"
-        style={{ backgroundColor: "#000", color: "#FFF" }}
-      >
-        <p>Grupo esclusivo no Telegram</p>
-        <div>
-          <button className="btn-delete">
-            <FiTrash2 size={24} color="#FFF" />
-          </button>
-        </div>
-      </article>
+
+      {links.map((item, index) => (
+        <article
+          key={index}
+          className="list animated-pop"
+          style={{ backgroundColor: item.bg, color: item.color }}
+        >
+          <p>{item.name}</p>
+          <div>
+            <button
+              className="btn-delete"
+              onClick={() => handleDeleteLink(item.id)}
+            >
+              <FiTrash2 size={24} color="#FFF" />
+            </button>
+          </div>
+        </article>
+      ))}
     </div>
   );
 }
